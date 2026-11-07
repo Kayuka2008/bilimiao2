@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.user
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
@@ -150,21 +151,15 @@ private fun UserFavouritePageContent(
         ),
         first = {
             Column {
-                TabRow(
+                GlassTabRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
                         .padding(
                             top = windowInsets.topDp.dp,
                             start = windowInsets.leftDp.dp,
                             end = if (it.showTowPane) 0.dp else windowInsets.rightDp.dp
                         ),
                     selectedTabIndex = pagerState.currentPage,
-                    indicator = { positions ->
-                        TabRowDefaults.PrimaryIndicator(
-                            Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                        )
-                    },
                 ) {
                     Tab(
                         text = {

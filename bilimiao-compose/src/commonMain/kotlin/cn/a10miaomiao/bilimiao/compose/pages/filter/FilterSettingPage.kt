@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.filter
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -67,10 +68,9 @@ private fun FilterSettingPageContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        PrimaryTabRow(
+        GlassTabRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(
                     top = windowInsets.topDp.dp,
                     start = windowInsets.leftDp.dp,

@@ -44,6 +44,9 @@ kotlinpoet = "1.9.0"
 androidToolsSdkCommon = "31.6.0"
 xpp3 = "1.1.6"
 guava = "23.0"
+# liquid glass (Android RenderEffect / AGSL)
+kyantBackdrop = "2.0.1"
+kyantShapes = "1.2.1"
 # mediamp
 mediamp = "0.5.0"
 jna = "5.13.0"
@@ -120,6 +123,9 @@ coil-gif = { group = "io.coil-kt.coil3", name = "coil-gif", version.ref = "coil"
 qrose = { group = "io.github.alexzhirkevich", name = "qrose", version.ref = "qrose" }
 compose-preference = { group = "me.zhanghai.compose.preference", name = "preference", version.ref = "composePreference" }
 reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
+# liquid glass
+kyant-backdrop = { group = "io.github.kyant0", name = "backdrop", version.ref = "kyantBackdrop" }
+kyant-shapes-android = { group = "io.github.kyant0", name = "shapes-android", version.ref = "kyantShapes" }
 # mediamp
 mediamp-api = { module = "org.openani.mediamp:mediamp-api", version.ref = "mediamp" }
 mediamp-mpv = { module = "org.openani.mediamp:mediamp-mpv", version.ref = "mediamp" }

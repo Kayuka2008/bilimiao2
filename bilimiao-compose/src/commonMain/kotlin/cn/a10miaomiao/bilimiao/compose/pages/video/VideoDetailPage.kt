@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.video
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import cn.a10miaomiao.bilimiao.compose.common.BackHandler
 import cn.a10miaomiao.bilimiao.compose.platform.LocalPlatformContext
 import androidx.compose.animation.AnimatedContent
@@ -312,7 +313,7 @@ private fun VideoDetailPageContent(
             ) {
                 val replyCount = arcData.stat?.reply
                 if (tabs.size > 1) {
-                    TabRow(
+                    GlassTabRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
@@ -320,14 +321,8 @@ private fun VideoDetailPageContent(
                                 start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                                 end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
                             )
-                            .background(MaterialTheme.colorScheme.surface)
                             .scrollable(rememberScrollableState { 0f }, Orientation.Vertical),
                         selectedTabIndex = pagerState.currentPage,
-                        indicator = { positions ->
-                            TabRowDefaults.PrimaryIndicator(
-                                Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                            )
-                        },
                     ) {
                         tabs.forEachIndexed { index, tab ->
                             val selected = tabs[pagerState.currentPage].first == tab.first

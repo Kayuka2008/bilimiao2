@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.user
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
@@ -144,17 +145,11 @@ private fun UserSpaceSearchPageContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TabRow(
+        GlassTabRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
             selectedTabIndex = pagerState.currentPage,
-            indicator = { positions ->
-                TabRowDefaults.PrimaryIndicator(
-                    Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                )
-            },
         ) {
             viewModel.tabs.forEachIndexed { index, tab ->
                 Tab(

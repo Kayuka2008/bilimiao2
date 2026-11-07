@@ -1,9 +1,8 @@
 package cn.a10miaomiao.bilimiao.compose.components.appbar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,21 +15,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,28 +41,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.Tune
+import cn.a10miaomiao.bilimiao.compose.components.glass.glassAppBarSurface
 
 /**
- * AppBar 组件
- * 支持竖屏和横屏两种布局
- *
- * 竖屏布局为「标题条 + 菜单行」的底栏，页面滚动时按 [AppBarState.collapseProgress] 整体下滑，
- * 收起后只保留标题条（参照老项目 bbmiao 的 quick-return 行为）。
- *
- * @param title 标题
- * @param canBack 是否显示返回按钮
- * @param showPointer 是否显示指针图标
- * @param pointerOrientation 指针方向
- * @param showExchange 是否显示交换图标（横屏）
- * @param menus 菜单列表
- * @param isNavigationMenu 是否为导航菜单模式
- * @param checkedKey 当前选中的菜单项key
- * @param onBackClick 返回按钮点击
- * @param onMenuClick 菜单按钮点击
- * @param onMenuItemClick 菜单项点击
- * @param onPointerClick 指针点击
- * @param onExchangeClick 交换按钮点击
- * @param modifier 修饰符
+ * 竖屏下的悬浮玻璃底栏：标题条 + 菜单行，左导航 / 中菜单 / 右工具。
+ * 底栏常驻，不随列表滚动收起；外层 bounds 由 ComposeScaffoldLayoutModel 预留悬浮空间。
  */
 @Composable
 fun AppBar(
@@ -79,34 +65,40 @@ fun AppBar(
     onExchangeClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val safePadding = WindowInsets.safeDrawing.only(
-        WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+    // 水平安全区在这里处理，底部安全区交给外层悬浮 padding，避免重复叠加。
+    val horizontalSafe = WindowInsets.safeDrawing.only(
+        WindowInsetsSides.Horizontal
     ).asPaddingValues()
-    val collapseRangePx = with(LocalDensity.current) { AppBarConfig.MenuHeight.toPx() }
+    val bottomSafe = WindowInsets.safeDrawing.only(
+        WindowInsetsSides.Bottom
+    ).asPaddingValues().calculateBottomPadding()
     val interactionSource = remember { MutableInteractionSource() }
-    val surfaceColor = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.96f)
+    val dark = isSystemInDarkTheme()
+    // 白色半透明染色，低版本没有模糊时也可独立成立。
+    val glassTint = if (dark) {
+        Color.White.copy(alpha = 0.14f)
+    } else {
+        Color.White.copy(alpha = 0.30f)
+    }
+    val buttonTint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
 
-    // 整条 Surface 下滑一个菜单行高度：菜单行滑出可视区，标题条停在底部安全区上方，
-    // 上方腾出的空间露出下面的内容；滑出窗口底部的部分靠 clipToBounds 裁掉。
-    // 收缩进度在绘制阶段读取，滚动过程中不触发重组
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clipToBounds(),
-    ) {
-        Surface(
-            color = surfaceColor,
-            contentColor = MaterialTheme.colorScheme.onSurface,
+    // 不裁剪，让玻璃的外阴影可以画到 bounds 之外。
+    Box(modifier = modifier.fillMaxWidth()) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .graphicsLayer {
-                    translationY = collapseRangePx * appBarState.collapseProgress
-                },
+                .padding(horizontal = 16.dp)
+                .padding(bottom = bottomSafe + 10.dp)
+                .glassAppBarSurface(
+                    tint = glassTint,
+                    highlightColor = Color.White,
+                    blurRadius = 18.dp,
+                    cornerRadius = 30.dp,
+                    shadowElevation = 8.dp,
+                ),
         ) {
-            Column(
-                modifier = Modifier.padding(safePadding)
-            ) {
-                // 标题区域（收起后标题条变成唯一的可点击入口，点击重新展开菜单行）
+            Column(modifier = Modifier.padding(horizontalSafe)) {
+                // 标题条：收起后是唯一可点击入口，点击重新展开菜单行
                 AppBarTitle(
                     title = title,
                     modifier = Modifier
@@ -116,12 +108,10 @@ fun AppBar(
                             interactionSource = interactionSource,
                             indication = null,
                         ) {
-                            // 展开态下是空操作，收起态下动画展开
                             appBarState.expandAppBar()
                         }
                 )
 
-                // 菜单区域
                 AppBarMenuRow(
                     canBack = canBack,
                     showPointer = showPointer,
@@ -136,15 +126,14 @@ fun AppBar(
                     onMenuItemClick = onMenuItemClick,
                     onPointerClick = onPointerClick,
                     onExchangeClick = onExchangeClick,
+                    buttonTint = buttonTint,
                 )
             }
         }
     }
 }
 
-/**
- * AppBar 标题
- */
+/** 标题条，点击可展开菜单行。 */
 @Composable
 private fun AppBarTitle(
     title: String?,
@@ -157,7 +146,7 @@ private fun AppBarTitle(
         if (!title.isNullOrEmpty()) {
             Text(
                 text = title.replace("\n", " "),
-                color = LocalContentColor.current.copy(alpha = 0.45f),
+                color = LocalContentColor.current.copy(alpha = 0.78f),
                 fontSize = AppBarConfig.TitleTextSize.value.sp,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -167,11 +156,7 @@ private fun AppBarTitle(
     }
 }
 
-/**
- * AppBar 菜单行
- *
- * 透明度随收缩进度在绘制阶段淡出，滚动时不参与重组
- */
+/** 菜单行：左导航、中间菜单区、右工具按钮。 */
 @Composable
 private fun AppBarMenuRow(
     canBack: Boolean,
@@ -187,41 +172,27 @@ private fun AppBarMenuRow(
     onMenuItemClick: (MenuItemData) -> Unit,
     onPointerClick: () -> Unit,
     onExchangeClick: () -> Unit,
+    buttonTint: Color,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(AppBarConfig.MenuHeight)
-            .padding(start = AppBarConfig.NavigationPadding)
-            .graphicsLayer { alpha = 1f - appBarState.collapseProgress },
+            .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         NavigationIcon(
             icon = if (canBack) AppBarNavigationIcon.Back else AppBarNavigationIcon.Menu,
             onClick = if (canBack) onBackClick else onMenuClick,
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .background(buttonTint),
         )
 
-        if (showPointer) {
-            AppBarIconButton(
-                icon = Icons.Default.Tune,
-                contentDescription = "指针",
-                rotation = if (pointerOrientation) 0f else 180f,
-                onClick = onPointerClick,
-            )
-        }
-
-        if (showExchange) {
-            AppBarIconButton(
-                icon = Icons.Default.SwapVert,
-                contentDescription = "交换",
-                onClick = onExchangeClick,
-            )
-        }
-
+        // 菜单区：导航模式用选中态胶囊列表，普通模式用可弹子菜单的菜单树
         if (isNavigationMenu) {
             LazyRow(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 horizontalArrangement = Arrangement.End,
             ) {
                 items(
@@ -237,35 +208,66 @@ private fun AppBarMenuRow(
                 }
             }
         } else {
-            VerticalAppBarMenus(
-                menus = menus,
-                isNavigationMenu = isNavigationMenu,
-                checkedKey = checkedKey,
-                appBarState = appBarState,
-                onMenuItemClick = onMenuItemClick,
+            Box(modifier = Modifier.weight(1f)) {
+                VerticalAppBarMenus(
+                    menus = menus,
+                    isNavigationMenu = isNavigationMenu,
+                    checkedKey = checkedKey,
+                    appBarState = appBarState,
+                    onMenuItemClick = onMenuItemClick,
+                )
+            }
+        }
+
+        if (showPointer) {
+            GlassIconButton(
+                icon = Icons.Default.Tune,
+                contentDescription = "指针",
+                rotation = if (pointerOrientation) 0f else 180f,
+                buttonTint = buttonTint,
+                onClick = onPointerClick,
+            )
+        }
+        if (showExchange) {
+            GlassIconButton(
+                icon = Icons.Default.SwapVert,
+                contentDescription = "交换",
+                buttonTint = buttonTint,
+                onClick = onExchangeClick,
             )
         }
     }
 }
 
+/** 圆形底的工具按钮。 */
 @Composable
-private fun AppBarIconButton(
+private fun GlassIconButton(
     icon: ImageVector,
     contentDescription: String,
+    buttonTint: Color,
     rotation: Float = 0f,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    Icon(
-        imageVector = icon,
-        contentDescription = contentDescription,
-        tint = LocalContentColor.current.copy(alpha = 0.45f),
+    Box(
         modifier = Modifier
-            .rotate(rotation)
+            .size(38.dp)
+            .clip(CircleShape)
+            .background(buttonTint)
             .clickable(
                 interactionSource = interactionSource,
                 indication = ripple(bounded = false),
                 onClick = onClick,
             ),
-    )
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = LocalContentColor.current.copy(alpha = 0.72f),
+            modifier = Modifier
+                .size(20.dp)
+                .rotate(rotation),
+        )
+    }
 }

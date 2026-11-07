@@ -71,6 +71,7 @@ import cn.a10miaomiao.bilimiao.compose.components.dialogs.MessageDialogState
 import cn.a10miaomiao.bilimiao.compose.components.image.MyImagePreviewer
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.ImagePreviewerProvider
 import cn.a10miaomiao.bilimiao.compose.components.layout.ComposeScaffold
+import cn.a10miaomiao.bilimiao.compose.components.glass.ProvideGlassBackdrop
 import cn.a10miaomiao.bilimiao.compose.components.start.SearchOverlay
 import com.a10miaomiao.bilimiao.comm.store.AppStore
 import org.kodein.di.DI
@@ -247,6 +248,7 @@ fun MainComposeHost(
     ) {
         withDI(di = hostDi) {
             BilimiaoTheme(appState = appState) {
+                ProvideGlassBackdrop {
                 val toasterState = rememberToasterState()
                 LaunchedEffect(toasterState) {
                     GlobalToaster.init(toasterState)
@@ -294,6 +296,7 @@ fun MainComposeHost(
                     alignment = Alignment.BottomCenter,
                     richColors = true,
                 )
+                }
             }
         }
     }

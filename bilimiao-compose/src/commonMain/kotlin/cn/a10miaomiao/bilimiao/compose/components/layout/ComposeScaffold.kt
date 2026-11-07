@@ -79,6 +79,8 @@ import cn.a10miaomiao.bilimiao.compose.common.isCompactWindow
 import cn.a10miaomiao.bilimiao.compose.common.ContentInsets
 import cn.a10miaomiao.bilimiao.compose.common.toContentInsets
 import cn.a10miaomiao.bilimiao.compose.components.appbar.AppBar
+import cn.a10miaomiao.bilimiao.compose.components.glass.glassAmbientBlobs
+import cn.a10miaomiao.bilimiao.compose.components.glass.glassBackdropSource
 import cn.a10miaomiao.bilimiao.compose.components.appbar.AppBarConfig
 import cn.a10miaomiao.bilimiao.compose.components.appbar.AppBarHorizontal
 import cn.a10miaomiao.bilimiao.compose.components.appbar.AppBarOrientation
@@ -415,6 +417,7 @@ fun ComposeScaffold(
                     ) {
                         Box(
                             modifier = Modifier
+                                .glassBackdropSource()
                                 .fillMaxSize()
                                 .then(
                                     if (appBarNestedScrollConnection != null) {
@@ -424,6 +427,7 @@ fun ComposeScaffold(
                                     }
                                 )
                                 .background(MaterialTheme.colorScheme.background)
+                                .glassAmbientBlobs(topBlobs = false)
                         ) {
                             content()
                         }

@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.dynamic.components
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -144,16 +145,11 @@ private fun DynamicAllAndVideoWrap(
         modifier = Modifier.fillMaxSize()
     ) {
         if (isMiniUpList) {
-            TabRow(
+            GlassTabRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
                 selectedTabIndex = pagerState.currentPage,
-                indicator = { positions ->
-                    TabRowDefaults.PrimaryIndicator(
-                        Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                    )
-                },
             ) {
                 tabs.forEachIndexed { index, tab ->
                     Tab(

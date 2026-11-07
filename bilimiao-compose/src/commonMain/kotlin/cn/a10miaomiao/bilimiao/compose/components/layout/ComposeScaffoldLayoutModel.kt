@@ -12,6 +12,9 @@ import cn.a10miaomiao.bilimiao.compose.components.appbar.AppBarOrientation
 import cn.a10miaomiao.bilimiao.compose.components.appbar.AppBarState
 import kotlin.math.min
 
+/** 悬浮底栏的额外高度，给留白、阴影和内容避让。 */
+private val GlassBarExtraHeight = 18.dp
+
 internal data class ComposeScaffoldGeometryResult(
     val contentBounds: Rect,
     val appBarVerticalBounds: Rect?,
@@ -121,7 +124,9 @@ private fun Density.calculateComposeScaffoldGeometry(
     )
 
     val appBarVerticalBounds = if (hasVerticalAppBar) {
-        val appBarHeightPx = (AppBarConfig.Height + rawWindowInsets.bottom).roundToPx()
+        val appBarHeightPx = (
+            AppBarConfig.Height + GlassBarExtraHeight + rawWindowInsets.bottom
+        ).roundToPx()
         Rect(
             left = 0f,
             top = (viewportHeightPx - appBarHeightPx).toFloat(),
@@ -157,7 +162,7 @@ private fun Density.calculateComposeScaffoldContentInsets(
     geometry: ComposeScaffoldGeometryResult,
 ): ContentInsets {
     val verticalAppBarInset = if (geometry.hasVerticalAppBar) {
-        AppBarConfig.Height
+        AppBarConfig.Height + GlassBarExtraHeight
     } else {
         0.dp
     }

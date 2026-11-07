@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.mine
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -131,17 +132,11 @@ private fun MyBangumiPageContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TabRow(
+        GlassTabRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
             selectedTabIndex = pagerState.currentPage,
-            indicator = { positions ->
-                TabRowDefaults.PrimaryIndicator(
-                    Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                )
-            },
         ) {
             viewModel.tabs.forEachIndexed { index, tab ->
                 Tab(

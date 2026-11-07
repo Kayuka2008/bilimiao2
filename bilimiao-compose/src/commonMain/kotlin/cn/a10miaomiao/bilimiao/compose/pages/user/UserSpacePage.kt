@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.user
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
@@ -343,21 +344,15 @@ private fun UserSpacePageDetailContent(
                     )
                 },
         ) {
-            TabRow(
+            GlassTabRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(
                         start = windowInsets.leftDp.dp,
                         end = windowInsets.rightDp.dp,
                     )
                     .scrollable(headerScrollableState, Orientation.Vertical),
                 selectedTabIndex = viewModel.pagerState.currentPage,
-                indicator = { positions ->
-                    TabRowDefaults.PrimaryIndicator(
-                        Modifier.pagerTabIndicatorOffset(viewModel.pagerState, positions),
-                    )
-                },
             ) {
                 viewModel.tabs.forEachIndexed { index, tab ->
                     Tab(

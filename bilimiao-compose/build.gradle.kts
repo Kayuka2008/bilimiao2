@@ -89,6 +89,10 @@ kotlin {
                 implementation(libs.androidx.media3.ui)
                 // 弹幕引擎 (KMP，与桌面端共用)
                 implementation(project(":danmaku-engine"))
+
+                // 玻璃效果依赖 Android RenderEffect；shapes 是 runtime 作用域，需显式声明。
+                implementation(libs.kyant.backdrop)
+                implementation(libs.kyant.shapes.android)
             }
         }
         val desktopMain by getting {
@@ -116,6 +120,8 @@ kotlin {
 
 android {
     compileSdk = 37
+    // backdrop AAR 要求 compileSdk 37 / minor 0。
+    compileSdkMinor = 0
 
     defaultConfig {
         minSdk = 21

@@ -15,6 +15,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTopBar
+import cn.a10miaomiao.bilimiao.compose.components.glass.ProvideTopGlassBackdrop
+import cn.a10miaomiao.bilimiao.compose.components.glass.glassAmbientBlobs
+import cn.a10miaomiao.bilimiao.compose.components.glass.topGlassBackdropSource
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
@@ -24,9 +30,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,7 +52,6 @@ import cn.a10miaomiao.bilimiao.compose.common.constant.PageTabIds
 import cn.a10miaomiao.bilimiao.compose.common.diViewModel
 import cn.a10miaomiao.bilimiao.compose.common.emitter.EmitterAction
 import cn.a10miaomiao.bilimiao.compose.common.foundation.combinedTabDoubleClick
-import cn.a10miaomiao.bilimiao.compose.common.foundation.pagerTabIndicatorOffset
 import cn.a10miaomiao.bilimiao.compose.common.localContentInsets
 import cn.a10miaomiao.bilimiao.compose.common.localEmitter
 import cn.a10miaomiao.bilimiao.compose.common.mypage.PageConfig
@@ -350,51 +352,46 @@ private fun HomePageContent(
         }
     )
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        TabRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
-            selectedTabIndex = pagerState.currentPage,
-            indicator = { positions ->
-                TabRowDefaults.PrimaryIndicator(
-                    Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                )
-            },
-        ) {
-            viewModel.tabs.forEachIndexed { index, tab ->
-                Tab(
-                    text = {
-                        Text(
-                            text = tab.name,
-                            color = if (index == pagerState.currentPage) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onBackground
-                            }
-                        )
-                    },
-                    selected = pagerState.currentPage == index,
-                    onClick = { combinedTabClick(index) },
-                )
-            }
-        }
-        val saveableStateHolder = rememberSaveableStateHolder()
-        DrawerAwareHorizontalPager(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            pagerState = pagerState,
-            onEdgeSwipeOpen = {
+    val topInset = windowInsets.toPaddingValues(bottom = 0.dp).calculateTopPadding()
+    val topBarSpace = topInset + 44.dp
 
+    ProvideTopGlassBackdrop {
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 录制层与玻璃顶栏互为兄弟，避免采样到玻璃自身
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .topGlassBackdropSource()
+                    .background(MaterialTheme.colorScheme.background)
+                    .glassAmbientBlobs(bottomBlobs = false)
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Spacer(modifier = Modifier.height(topBarSpace))
+                    val saveableStateHolder = rememberSaveableStateHolder()
+                    DrawerAwareHorizontalPager(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        pagerState = pagerState,
+                        onEdgeSwipeOpen = {
+
+                        }
+                    ) { index ->
+                        saveableStateHolder.SaveableStateProvider(index) {
+                            viewModel.tabs[index].PageContent(viewModel.pageState)
+                        }
+                    }
+                }
             }
-        ) { index ->
-            saveableStateHolder.SaveableStateProvider(index) {
-                viewModel.tabs[index].PageContent(viewModel.pageState)
-            }
+
+            // 悬浮玻璃顶栏
+            GlassTopBar(
+                tabs = viewModel.tabs.map { it.name },
+                selectedIndex = pagerState.currentPage,
+                onTabClick = combinedTabClick,
+                topInset = topInset,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
         }
     }
 

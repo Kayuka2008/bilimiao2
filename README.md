@@ -1,3 +1,11 @@
+> **这是 [10miaomiao/bilimiao2](https://github.com/10miaomiao/bilimiao2) 的个人 fork，不是官方版本。**
+>
+> `feat/liquid-glass` 分支把底栏和各页顶部的标签栏换成了悬浮玻璃（背景模糊 + 折射 + 高光），
+> 详见 [MODIFICATIONS.md](MODIFICATIONS.md)。原项目 GPL-3.0，本 fork 同样以 GPL-3.0 开源，
+> 原 LICENSE 和版权声明都保留。debug APK 见 Releases，官方下载与交流请到上游仓库。
+
+---
+
 <p align="center">
 <img width="100px" src="https://10miaomiao.cn/icons/bilimiao_new.png"/>
 </p>

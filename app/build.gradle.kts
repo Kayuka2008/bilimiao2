@@ -15,6 +15,7 @@ val appVersionCode = rootProject.extra["bilimiaoVersionCode"] as Int
 android {
     namespace = "com.a10miaomiao.bilimiao"
     compileSdk = 37
+    compileSdkMinor = 0
 
     defaultConfig {
         applicationId = "com.a10miaomiao.bilimiao"

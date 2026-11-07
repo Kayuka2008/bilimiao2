@@ -1,5 +1,6 @@
 package cn.a10miaomiao.bilimiao.compose.pages.mine
 
+import cn.a10miaomiao.bilimiao.compose.components.glass.GlassTabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
@@ -202,25 +203,15 @@ private fun MyFollowPageContent() {
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
-            ScrollableTabRow(
+            GlassTabRow(scrollable = true,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(
                         top = windowInsets.topDp.dp,
                         start = windowInsets.leftDp.dp,
                         end = windowInsets.rightDp.dp,
                     ),
-                edgePadding = 0.dp,
                 selectedTabIndex = currentPage,
-                indicator = { positions ->
-                    if (currentPage > -1 && currentPage < positions.size) {
-                        TabRowDefaults.PrimaryIndicator(
-                            Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                        )
-                    }
-                },
-                divider = {}
             ) {
                 tagList.forEachIndexed { index, tab ->
                     Tab(
