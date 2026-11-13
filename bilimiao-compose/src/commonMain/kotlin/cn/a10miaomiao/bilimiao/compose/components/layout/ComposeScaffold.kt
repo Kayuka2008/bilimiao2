@@ -176,10 +176,9 @@ fun ComposeScaffold(
         } else {
             val collapseRangePx = with(density) { AppBarConfig.MenuHeight.toPx() }
             object : NestedScrollConnection {
-                // 横屏 AppBar 是侧边栏，不参与滚动收缩
+                // 大屏的侧边 Rail 也参与滚动收缩，和底部 Dock 的行为保持一致
                 private val enabled: Boolean
-                    get() = appBarState.visible &&
-                        appBarState.orientation == AppBarOrientation.Vertical
+                    get() = appBarState.visible
 
                 override fun onPostScroll(
                     consumed: androidx.compose.ui.geometry.Offset,
