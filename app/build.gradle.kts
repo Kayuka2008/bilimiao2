@@ -55,6 +55,14 @@ android {
             applicationIdSuffix = ".dev"
             resValue("string", "app_name", "bilimiao dev")
             manifestPlaceholders["channel"] = "Development"
+            // 与 release 一样做代码裁剪：debug 默认全量打包 material-icons-extended
+            // 和 gRPC 生成的 proto 类，仅这两项就占十几 MB 未压缩 dex。
+            // proguard-rules.pro 里是 -dontobfuscate + 反射 keep，保留可读堆栈。
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         release {
             isMinifyEnabled = true
