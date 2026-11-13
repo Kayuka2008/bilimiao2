@@ -17,6 +17,12 @@ object AppBarConfig {
     /** 菜单区域高度 */
     val MenuHeight: Dp = 50.dp
 
+    /** 分层 Dock：常驻导航层高度 */
+    val DockHeight: Dp = 54.dp
+
+    /** 分层 Dock：可展开操作层高度 */
+    val TrayHeight: Dp = 46.dp
+
     /** 横屏时菜单宽度 */
     val MenuWidth: Dp = 120.dp
 
