@@ -16,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import cn.a10miaomiao.bilimiao.compose.components.appbar.LocalAppBarState
 
 /** 通用玻璃 TabRow，自带独立采样层；接口与原 TabRow 一致。 */
 @Composable
@@ -27,6 +29,7 @@ fun GlassTabRow(
     scrollable: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val appBarState = LocalAppBarState.current
     val dark = isSystemInDarkTheme()
     val tint = if (dark) {
         Color.White.copy(alpha = 0.14f)
@@ -38,7 +41,12 @@ fun GlassTabRow(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
-                .height(48.dp),
+                .height(48.dp)
+                .graphicsLayer {
+                    val p = appBarState?.collapseProgress ?: 0f
+                    translationY = -10.dp.toPx() * p
+                    alpha = 1f - 0.35f * p
+                },
         ) {
             // 录制层与玻璃同形状，避免光斑溢出
             Box(
